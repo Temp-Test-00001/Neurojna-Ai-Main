@@ -1,0 +1,152 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Catch-all Default-Deny Security Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Shared Helper Functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isAllowedAdminEmail(email) {
+      return email == 'bhushanmallick2006@gmail.co' || 
+             email == 'bhushanmallick2006@gmail.com' || 
+             email == 'infoneurojnaai@gmail.com';
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Entity-Specific Validation Rules (The "Validation Blueprints")
+    function isValidAdmin(data) {
+      return data.keys().hasAll(['uid', 'email', 'name', 'phone', 'createdAt']) && 
+             data.keys().size() == 5 &&
+             data.uid is string && data.uid == request.auth.uid &&
+             data.email is string && data.email.size() <= 128 &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 128 &&
+             data.phone is string && data.phone.size() >= 8 && data.phone.size() <= 32;
+    }
+
+    function isValidSolution(data) {
+      return data.keys().hasAll(['id', 'type', 'title', 'subtitle', 'tagline', 'description']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.type is string && (data.type == 'product' || data.type == 'service') &&
+             data.title is string && data.title.size() <= 200 &&
+             data.subtitle is string && data.subtitle.size() <= 500 &&
+             data.tagline is string && data.tagline.size() <= 200 &&
+             data.description is string && data.description.size() <= 5000;
+    }
+
+    function isValidCaseStudy(data) {
+      return data.keys().hasAll(['id', 'client', 'industry', 'title', 'challenge', 'solution']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.client is string && data.client.size() <= 200 &&
+             data.industry is string && data.industry.size() <= 128 &&
+             data.title is string && data.title.size() <= 200 &&
+             data.challenge is string && data.challenge.size() <= 5000 &&
+             data.solution is string && data.solution.size() <= 5000;
+    }
+
+    function isValidBlogPost(data) {
+      return data.keys().hasAll(['id', 'title', 'subtitle', 'author', 'date', 'readTime', 'content', 'category']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.title is string && data.title.size() <= 200 &&
+             data.subtitle is string && data.subtitle.size() <= 500 &&
+             data.author is string && data.author.size() <= 128 &&
+             data.date is string && data.date.size() <= 64 &&
+             data.readTime is string && data.readTime.size() <= 64 &&
+             data.content is string && data.content.size() <= 100000 &&
+             data.category is string && data.category.size() <= 128;
+    }
+
+    function isValidCareerOpening(data) {
+      return data.keys().hasAll(['id', 'title', 'department', 'location', 'type', 'experience', 'salary', 'description']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.title is string && data.title.size() <= 200 &&
+             data.department is string && data.department.size() <= 128 &&
+             data.location is string && data.location.size() <= 128 &&
+             data.type is string && data.type.size() <= 128 &&
+             data.experience is string && data.experience.size() <= 128 &&
+             data.salary is string && data.salary.size() <= 128 &&
+             data.description is string && data.description.size() <= 5000;
+    }
+
+    function isValidContactInquiry(data) {
+      return data.keys().hasAll(['name', 'email', 'message', 'timestamp']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 128 &&
+             data.email is string && data.email.size() > 0 && data.email.size() <= 128 &&
+             data.message is string && data.message.size() > 0 && data.message.size() <= 5000;
+    }
+
+    function isValidSubscriber(data) {
+      return data.keys().hasAll(['email', 'timestamp']) &&
+             data.email is string && data.email.size() > 0 && data.email.size() <= 128;
+    }
+
+    // ==========================================
+    // Collections Rules Match Blocks
+    // ==========================================
+
+    // Admin profiles: Only allow direct access to own document for allowed admin emails, or full read/write for verified existing admins
+    match /admins/{uid} {
+      allow read: if isSignedIn() && (isAdmin() || request.auth.uid == uid);
+      allow write: if isSignedIn() && (
+        isAdmin() || 
+        (request.auth.uid == uid && isAllowedAdminEmail(request.auth.token.email) && isValidAdmin(incoming()))
+      );
+    }
+
+    // Solutions catalog: Public read, Admin write
+    match /solutions/{id} {
+      allow read: if true;
+      allow write: if isAdmin() && (request.method == 'delete' || isValidSolution(incoming()));
+    }
+
+    // Case Studies catalog: Public read, Admin write
+    match /caseStudies/{id} {
+      allow read: if true;
+      allow write: if isAdmin() && (request.method == 'delete' || isValidCaseStudy(incoming()));
+    }
+
+    // Blog posts: Public read, Admin write
+    match /blogs/{id} {
+      allow read: if true;
+      allow write: if isAdmin() && (request.method == 'delete' || isValidBlogPost(incoming()));
+    }
+
+    // Job Careers openings: Public read, Admin write
+    match /careers/{id} {
+      allow read: if true;
+      allow write: if isAdmin() && (request.method == 'delete' || isValidCareerOpening(incoming()));
+    }
+
+    // Contact Inquiries: Anyone can create, Admin read/write
+    match /contacts/{id} {
+      allow create: if isValidContactInquiry(incoming());
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Newsletter Subscribers: Anyone can create, Admin read/write
+    match /subscribers/{id} {
+      allow create: if isValidSubscriber(incoming());
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

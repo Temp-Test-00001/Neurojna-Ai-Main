@@ -1,0 +1,139 @@
+{
+  "entities": {
+    "Admin": {
+      "title": "Admin",
+      "description": "System administrators authenticated via Google with verified profiles",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Google Auth UID of the administrator" },
+        "email": { "type": "string", "format": "email", "description": "Google email of the administrator" },
+        "name": { "type": "string", "description": "Full name of the administrator" },
+        "phone": { "type": "string", "description": "Phone number of the administrator" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["uid", "email", "name", "phone", "createdAt"]
+    },
+    "Solution": {
+      "title": "Solution",
+      "description": "Hardware and software sovereign solutions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier / slug" },
+        "type": { "type": "string", "enum": ["product", "service"], "description": "The type of solution" },
+        "title": { "type": "string", "description": "Name of solution" },
+        "subtitle": { "type": "string", "description": "Short description of solution" },
+        "tagline": { "type": "string", "description": "Marketing tagline" },
+        "description": { "type": "string", "description": "Main descriptive text" },
+        "features": { "type": "array", "description": "Core features list" },
+        "specs": { "type": "array", "description": "Technical specifications" },
+        "iconName": { "type": "string", "description": "Lucide icon name string" }
+      },
+      "required": ["id", "type", "title", "subtitle", "tagline", "description"]
+    },
+    "CaseStudy": {
+      "title": "CaseStudy",
+      "description": "Historic client deployment case study",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique slug for case study" },
+        "client": { "type": "string", "description": "The client organization name" },
+        "industry": { "type": "string", "description": "Industry sector" },
+        "title": { "type": "string", "description": "Title of the study" },
+        "challenge": { "type": "string", "description": "Problem context" },
+        "solution": { "type": "string", "description": "Deployed architecture" },
+        "results": { "type": "array", "description": "Result bullet items" },
+        "metrics": { "type": "array", "description": "Specific metrics indicators" }
+      },
+      "required": ["id", "client", "industry", "title", "challenge", "solution"]
+    },
+    "BlogPost": {
+      "title": "BlogPost",
+      "description": "Bespoke corporate and technical articles",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique blog post slug" },
+        "title": { "type": "string", "description": "Title of the post" },
+        "subtitle": { "type": "string", "description": "Subtitle" },
+        "author": { "type": "string", "description": "Author name" },
+        "date": { "type": "string", "description": "Publication date string" },
+        "readTime": { "type": "string", "description": "Estimated reading time" },
+        "content": { "type": "string", "description": "Markdown text content" },
+        "category": { "type": "string", "description": "Technical/organizational category" },
+        "tags": { "type": "array", "description": "Associated topics" },
+        "imageUrl": { "type": "string", "description": "Featured image URL" }
+      },
+      "required": ["id", "title", "subtitle", "author", "date", "readTime", "content", "category"]
+    },
+    "CareerOpening": {
+      "title": "CareerOpening",
+      "description": "Job description and application metrics",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique job slug" },
+        "title": { "type": "string", "description": "Job title" },
+        "department": { "type": "string", "description": "Engineering/Operations department" },
+        "location": { "type": "string", "description": "Job site location" },
+        "type": { "type": "string", "description": "Full-time/Part-time etc." },
+        "experience": { "type": "string", "description": "Experience requirements" },
+        "salary": { "type": "string", "description": "Compensation range" },
+        "description": { "type": "string", "description": "Role overview description" },
+        "requirements": { "type": "array", "description": "Required skills list" },
+        "responsibilities": { "type": "array", "description": "Responsibility bullet points" }
+      },
+      "required": ["id", "title", "department", "location", "type", "experience", "salary", "description"]
+    },
+    "ContactInquiry": {
+      "title": "ContactInquiry",
+      "description": "Incoming client requests and proposals",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Sender full name" },
+        "email": { "type": "string", "format": "email", "description": "Sender email address" },
+        "company": { "type": "string", "description": "Sender organization/company" },
+        "message": { "type": "string", "description": "Detailed text proposal" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Time received" }
+      },
+      "required": ["name", "email", "message", "timestamp"]
+    },
+    "Subscriber": {
+      "title": "Subscriber",
+      "description": "Newsletter registration email address",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email", "description": "Subscriber email address" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Time subscribed" }
+      },
+      "required": ["email", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/admins/{uid}": {
+      "schema": "Admin",
+      "description": "Trusted administrators profiles"
+    },
+    "/solutions/{id}": {
+      "schema": "Solution",
+      "description": "Sovereign solutions catalogue"
+    },
+    "/caseStudies/{id}": {
+      "schema": "CaseStudy",
+      "description": "Historic client case studies"
+    },
+    "/blogs/{id}": {
+      "schema": "BlogPost",
+      "description": "Security and hardware tech blogs"
+    },
+    "/careers/{id}": {
+      "schema": "CareerOpening",
+      "description": "Job opportunities"
+    },
+    "/contacts/{id}": {
+      "schema": "ContactInquiry",
+      "description": "Client inquiry proposals"
+    },
+    "/subscribers/{id}": {
+      "schema": "Subscriber",
+      "description": "Newsletter email lists"
+    }
+  }
+}

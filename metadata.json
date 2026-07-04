@@ -1,0 +1,6 @@
+{
+  "name": "Neurojana AI",
+  "description": "Official corporate website for Neurojana AI Pvt. Ltd., specializing in custom full-stack software development, web applications, bespoke ERP systems, and integrated sovereign AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
