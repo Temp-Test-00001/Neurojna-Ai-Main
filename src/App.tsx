@@ -329,7 +329,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-200 font-sans selection:bg-blue-600 selection:text-white flex flex-col relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#02040a] text-slate-200 font-sans selection:bg-blue-600 selection:text-white flex flex-col relative overflow-x-hidden">
       
       {/* Background Ambient Glows */}
       <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none z-0" />
@@ -337,7 +337,7 @@ export default function App() {
       <div className="absolute top-[50%] right-[-10%] w-[450px] h-[450px] bg-emerald-600/5 rounded-full blur-[130px] pointer-events-none z-0" />
 
       {/* Navigation Header */}
-      <header className="sticky top-0 w-full bg-[#020617]/85 backdrop-blur-md border-b border-slate-900 z-50 transition-all duration-300">
+      <header className="sticky top-0 w-full bg-[#02040a]/85 backdrop-blur-md border-b border-slate-900 z-50 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
           
           {/* Logo Brand */}
@@ -1876,13 +1876,12 @@ export default function App() {
           
           {/* Logo & Slogan Column */}
           <div className="space-y-4 text-left">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-lg flex items-center justify-center">
-                <div className="w-4 h-4 border-2 border-white rounded-full opacity-90" />
-              </div>
-              <span className="text-lg font-bold tracking-tight text-white">
-                NEUROJNA <span className="text-blue-400 font-normal">AI</span>
-              </span>
+            <div className="flex items-center gap-2">
+              <img
+                src={logoSrc}
+                alt="Neurojna AI Logo"
+                className="h-9 w-auto object-contain"
+              />
             </div>
             
             <p className="text-xs text-slate-500 leading-relaxed">
